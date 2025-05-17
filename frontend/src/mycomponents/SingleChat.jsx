@@ -20,7 +20,10 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
     useEffect(() => {
         if (!user) return;
 
-        socket = io(SERVER_URL);
+        const socket = io(SERVER_URL, {
+            withCredentials: true,
+            transports: ["websocket"], // force WebSocket transport
+        });;
         socket.emit("setup", user);
 
         socket.on("connected", () => {
@@ -37,7 +40,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
         fetchMessages();
         selectedChatCompare.current = selectedChat;
     }, [selectedChat]);
-    console.log(notifications, ".......")
+    // console.log(notifications, ".......")
     useEffect(() => {
         if (!socket) return;
 
@@ -59,7 +62,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
         return () => {
             socket.off("message-recieved");
         };
-    }, []);
+    });
 
     const fetchMessages = async () => {
         if (!selectedChat) return;
