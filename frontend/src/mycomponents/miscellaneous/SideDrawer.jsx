@@ -88,7 +88,7 @@ const SideDrawer = () => {
       <div className="container main-div d-flex justify-content-between align-items-center bg-dark py-2 px-4">
         <button
           type="button"
-          className="btn btn-light btn-xs"
+          className="btn btn-light btn-sm"
           data-bs-placement="top"
           title="Search user to chat"
           data-bs-toggle="offcanvas"
@@ -153,7 +153,7 @@ const SideDrawer = () => {
 
           <div className="dropdown">
             <button
-              className="btn btn-light btn-xs dropdown-toggle d-flex align-items-center gap-2"
+              className="btn btn-light btn-sm dropdown-toggle d-flex align-items-center gap-2"
               type="button"
               data-bs-toggle="dropdown"
               aria-expanded="false"
