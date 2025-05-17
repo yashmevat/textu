@@ -1,0 +1,21 @@
+nav ul {
+  list-style: none;
+  display: flex;
+  justify-content: center; /* horizontal centering */
+  gap: 2rem;
+  padding: 0;
+}
+
+nav li {
+  font-size: 1.2rem;
+}
+
+nav a {
+  text-decoration: none;
+  color: #333;
+}
+
+nav a.active {
+  font-weight: bold;
+  color: #007bff; /* active link color */
+}

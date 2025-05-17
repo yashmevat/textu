@@ -1,0 +1,73 @@
+import { useNavigate } from "react-router";
+import "../Style/Login.css"
+import React, { useState } from 'react'
+import axios from "axios";
+import { SERVER_URL } from "../config/ServerUrl";
+import Toast from "./Toast";
+const Login = () => {
+   const [show, setShow] = useState(false);
+   const navigate = useNavigate()
+   const [toast,setToast] = useState(null)
+     const handleClick = () => setShow(!show);
+     const [email, setEmail] = useState("");
+     const [password, setPassword] = useState("");
+     const [loading,setLoading] = useState(false);
+     
+     
+     const handleSubmit = async(e)=>{
+      e.preventDefault()
+      setLoading(true)
+      if(!email || !password){
+        setToast({message:"passwords do not matched",type:"error"})
+        setLoading(false)
+        return
+      }
+          try {
+      const config = {
+        headers :{
+          "content-type": "application/json"
+        }
+      }
+      const {data} = await axios.post(`${SERVER_URL}/api/user/login`,{
+        email,password
+      },config)
+      setToast({message:"Login success",type:"success"})
+      localStorage.setItem("userInfo",JSON.stringify(data));
+      navigate("/chats")
+    } catch (error) {
+      setToast({message :"some error occured",type:"error"})
+    }
+      
+
+     }
+  return (
+    <>
+     {
+        toast && 
+         ( <Toast message={toast.message}
+            type={toast.type}
+            onClose={() => setToast(null)} />)
+      }
+    <div className="form">
+      <h1 id="heading">Textu Login</h1>
+      <form onSubmit={handleSubmit} className='myform'>
+      
+        <div>
+          <label htmlFor="email">Enter Email</label>
+          <input type="text" id="email" onChange={(e)=>setEmail(e.target.value)} value={email}/> 
+        </div>
+        <div>
+          <label htmlFor="pass">Enter Password</label>
+          <input type="text" id="pass" onChange={(e)=>setPassword(e.target.value)} value={password}/> 
+        </div>
+        <div>
+          <input type="submit" />
+        </div>
+      </form>
+
+    </div>
+    </>
+  )
+}
+
+export default Login

@@ -1,0 +1,40 @@
+/* Make the card more compact */
+.user-card {
+  max-width: 300px;
+  margin: 10px auto;
+  border-radius: 10px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+/* Reduce image size and make it circular */
+.profile-img {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+/* Adjust body to remove default padding */
+.user-card .card-body {
+  padding: 0;
+  flex: 1;
+}
+
+/* Email text styling */
+.user-card .card-text {
+  margin: 0;
+  font-size: 14px;
+  color: #333;
+  word-break: break-word;
+}
+ .list:hover{
+    cursor: pointer;
+ }
+ .user-card:hover{
+    background-color: aliceblue;
+ }

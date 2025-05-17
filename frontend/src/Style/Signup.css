@@ -1,0 +1,71 @@
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI', sans-serif;
+  background-color: #f9f9f9;
+}
+
+.form {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.myform {
+  background-color: #ffffff;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
+  width: 320px;
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+
+.myform h1,
+#heading {
+  text-align: center;
+  margin-bottom: 1rem;
+  color: #333;
+}
+
+.myform label {
+  display: block;
+  font-size: 0.9rem;
+  color: #444;
+  margin-bottom: 0.3rem;
+}
+
+.myform input[type="text"],
+.myform input[type="file"],
+.myform input[type="password"],
+.myform input[type="email"] {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  background-color: #fafafa;
+  transition: border 0.3s ease;
+}
+
+.myform input[type="text"]:focus,
+.myform input[type="file"]:focus {
+  border-color: #007bff;
+  outline: none;
+}
+
+.myform input[type="submit"] {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 0.6rem;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.myform input[type="submit"]:hover {
+  background-color: #0056b3;
+}

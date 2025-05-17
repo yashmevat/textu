@@ -1,0 +1,35 @@
+/* Styling for the toggle buttons container */
+.toggle-auth {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin-top: 30px;
+}
+
+/* Styling for each button */
+.toggle-auth button {
+  padding: 10px 20px;
+  border: 1px solid #ddd;
+  background-color: #fff;
+  color: #333;
+  font-size: 16px;
+  font-weight: 500;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+/* Button hover effect */
+.toggle-auth button:hover {
+  background-color: #f0f0f0;
+  border-color: #bbb;
+}
+
+/* Active button styling */
+.toggle-auth button:active {
+  background-color: #e0e0e0;
+  border-color: #aaa;
+}
+
+/* Focus style for better accessibility */
+
