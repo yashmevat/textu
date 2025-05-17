@@ -88,7 +88,7 @@ const SideDrawer = () => {
       <div className="container main-div d-flex justify-content-between align-items-center bg-dark py-2 px-4">
         <button
           type="button"
-          className="btn btn-light"
+          className="btn btn-light bg-transparent"
           data-bs-placement="top"
           title="Search user to chat"
           data-bs-toggle="offcanvas"
