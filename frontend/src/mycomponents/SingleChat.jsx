@@ -7,7 +7,7 @@ import Spinner from './Spinner';
 import axios from 'axios';
 import io from 'socket.io-client';
 import { SERVER_URL } from '../config/ServerUrl';
-let socket;
+var socket;
 
 const SingleChat = ({ fetchAgain, setFetchAgain }) => {
     const { user, selectedChat, setSelectedChat, notifications, setNotifications } = ChatState();
@@ -20,7 +20,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
     useEffect(() => {
         if (!user) return;
 
-        const socket = io(SERVER_URL, {
+        socket = io(SERVER_URL, {
             withCredentials: true,
             transports: ["websocket"], // force WebSocket transport
         });;
