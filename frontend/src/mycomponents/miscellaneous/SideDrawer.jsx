@@ -95,7 +95,6 @@ const SideDrawer = () => {
           data-bs-target="#offcanvasScrolling"
           aria-controls="offcanvasScrolling"
         >
-          Search User
           <i class="fa-solid fa-magnifying-glass my-2 mx-2"></i>
         </button>
 
