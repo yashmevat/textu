@@ -4,6 +4,7 @@ import React, { useState } from 'react'
 import axios from "axios";
 import { SERVER_URL } from "../config/ServerUrl";
 import Toast from "./Toast";
+import Spinner from "../mycomponents/Spinner"
 const Login = () => {
    const [show, setShow] = useState(false);
    const navigate = useNavigate()
@@ -31,11 +32,14 @@ const Login = () => {
       const {data} = await axios.post(`${SERVER_URL}/api/user/login`,{
         email,password
       },config)
+      setLoading(false)
       setToast({message:"Login success",type:"success"})
       localStorage.setItem("userInfo",JSON.stringify(data));
       navigate("/chats")
     } catch (error) {
       setToast({message :"some error occured",type:"error"})
+      
+      setLoading(false)
     }
       
 
@@ -61,6 +65,7 @@ const Login = () => {
           <input type="text" id="pass" onChange={(e)=>setPassword(e.target.value)} value={password}/> 
         </div>
         <div>
+        {loading &&<Spinner/>}
           <input type="submit" />
         </div>
       </form>

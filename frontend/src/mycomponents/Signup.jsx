@@ -4,6 +4,7 @@ import Toast from './Toast';
 import axios from 'axios';
 import { useNavigate } from 'react-router';
 import { SERVER_URL } from '../config/ServerUrl';
+import Spinner from './Spinner';
 
 const Signup = () => {
   const navigate = useNavigate()
@@ -16,9 +17,11 @@ const Signup = () => {
   const [password, setPassword] = useState("");
   const [pic, setPic] = useState("");
   const [picLoading, setPicLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
   const handleSubmit = async(e) => {
     e.preventDefault()
     console.log(toast)
+    setLoading(true)
     if(!name || !email || !password ||!confirmpassword){
       setToast({ message: "fill up all fields", type: "error" })
       return   
@@ -38,15 +41,18 @@ const Signup = () => {
         name,email,password,pic
       },config)
       if(data){
-
+        setLoading(false)
         setToast({message:"Registration success",type:"success"})
         localStorage.setItem("userInfo",JSON.stringify(data));
         navigate("/chats")
       }else{
+        
+        setLoading(false)
         navigate("/signup")
       }
     } catch (error) {
       setToast({message :"some error occured",type:"error"})
+        setLoading(false)
     }
   
   }
@@ -116,13 +122,16 @@ const Signup = () => {
           <div>
             <label htmlFor="pic">Upload Image</label>
             <input type="file" p={.5} accept="image/*" id="pic" onChange={(e) => postDetails(e.target.files[0])} />
+            <span>{picLoading&&(<><p>uploading...</p><Spinner/></>)}</span>
           </div>
           <div>
             {
-              picLoading ?
+              loading&&<Spinner/>
+            }
+            {
+              picLoading?
                 <input type="submit" disabled /> :
                 <input type="submit" />
-
             }
           </div>
         </form>
