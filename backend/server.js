@@ -12,9 +12,9 @@ connectDB();
 
 // Fix: CORS with exact origin and credentials
 app.use(cors({
-  origin: "https://mytextu.netlify.app",
+  // origin: "https://mytextu.netlify.app",
   
-    // origin: "http://localhost:5173",
+    origin: "http://localhost:5173",
   credentials: true
 }));
 
@@ -40,8 +40,8 @@ const io = require("socket.io")(server, {
   cors: {
     origin: "https://mytextu.netlify.app",
     
-    // origin: "http://localhost:5173",
-    credentials: true
+    origin: "http://localhost:5173",
+    // credentials: true
   }
 });
 

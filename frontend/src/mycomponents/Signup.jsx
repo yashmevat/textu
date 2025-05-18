@@ -10,7 +10,10 @@ const Signup = () => {
   const navigate = useNavigate()
   const [toast, setToast] = useState(null)
   const [show, setShow] = useState(false);
+  
+  const [showConfirm, setShowConfirm] = useState(false);
   const handleClick = () => setShow(!show);
+  const handleConfirmClick = () => setShowConfirm(!showConfirm);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [confirmpassword, setConfirmpassword] = useState("");
@@ -21,7 +24,6 @@ const Signup = () => {
   const handleSubmit = async(e) => {
     e.preventDefault()
     console.log(toast)
-    setLoading(true)
     if(!name || !email || !password ||!confirmpassword){
       setToast({ message: "fill up all fields", type: "error" })
       return   
@@ -32,6 +34,7 @@ const Signup = () => {
       return;
     }
     try {
+      setLoading(true)
       const config = {
         headers :{
           "content-type": "application/json"
@@ -111,14 +114,39 @@ const Signup = () => {
             <label htmlFor="email">Enter Email</label>
             <input type="text" id="email" onChange={(e) => setEmail(e.target.value)} value={email} />
           </div>
-          <div>
+           <div>
             <label htmlFor="pass">Enter Password</label>
-            <input type="text" id="pass" onChange={(e) => setPassword(e.target.value)} value={password} />
+            <div className="password-container">
+              <input
+                type={show ? 'text' : 'password'}
+                id="pass"
+                onChange={(e) => setPassword(e.target.value)}
+                value={password}
+              />
+              <i
+                className={`fa-solid ${show ? 'fa-eye-slash' : 'fa-eye'} toggle-icon`}
+                onClick={handleClick}
+              ></i>
+            </div>
           </div>
-          <div>
-            <label htmlFor="cpass">Confirm Password </label>
-            <input type="text" id="cpass" onChange={(e) => setConfirmpassword(e.target.value)} value={confirmpassword} />
+
+              <div>
+            <label htmlFor="cpass">Confirm Password</label>
+            <div className="password-container">
+              <input
+                type={showConfirm ? 'text' : 'password'}
+                id="cpass"
+                onChange={(e) => setConfirmpassword(e.target.value)}
+                value={confirmpassword}
+              />
+              <i
+                className={`fa-solid ${showConfirm ? 'fa-eye-slash' : 'fa-eye'} toggle-icon`}
+                onClick={handleConfirmClick}
+              ></i>
+            </div>
           </div>
+
+          
           <div>
             <label htmlFor="pic">Upload Image</label>
             <input type="file" p={.5} accept="image/*" id="pic" onChange={(e) => postDetails(e.target.files[0])} />

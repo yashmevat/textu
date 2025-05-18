@@ -27,7 +27,7 @@ label {
   font-weight: 500;
 }
 
-input[type="text"],
+input[type="text"],input[type="password"],
 input[type="submit"] {
   width: 100%;
   padding: 10px 12px;
@@ -44,6 +44,12 @@ input[type="text"]:focus {
   border-color: #4a90e2;
   background-color: #fff;
 }
+input[type="password"]:focus {
+  outline: none;
+  border-color: #4a90e2;
+  background-color: #fff;
+}
+
 
 input[type="submit"] {
   background-color: #4a90e2;
@@ -55,4 +61,23 @@ input[type="submit"] {
 
 input[type="submit"]:hover {
   background-color: #357ab8;
+}
+
+.password-container {
+  position: relative;
+  width: 100%;
+}
+
+.password-container input {
+  width: 100%;
+  padding-right: 2.5rem; /* leave space for the icon */
+}
+
+.toggle-icon {
+  position: absolute;
+  right: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  color: #888;
 }
