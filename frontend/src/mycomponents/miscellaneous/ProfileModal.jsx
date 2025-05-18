@@ -25,7 +25,7 @@ const ProfileModal = ({ user }) => {
                         </div>
                         <div className="modal-body text-center">
                             <img
-                                src={user?.pic || "https://via.placeholder.com/150"}
+                                src={user?.pic || "https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg"}
                                 alt="Profile"
                                 className="rounded-circle mb-3"
                                 style={{ width: "150px", height: "150px", objectFit: "cover" }}
