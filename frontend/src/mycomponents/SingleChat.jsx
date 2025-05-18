@@ -16,6 +16,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
     const [newMessage, setNewMessage] = useState('');
     const [socketConnected, setSocketConnected] = useState(false);
     const selectedChatCompare = useRef();
+    const [messageLoading, setMessageLoading] = useState(false)
 
     useEffect(() => {
         if (!user) return;
@@ -85,32 +86,69 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
     };
 
     const sendMessage = async (e) => {
-        if (e.key === "Enter" && newMessage) {
+        console.log("clicked", e.key, newMessage)
+        let newm = newMessage
+        if (e.key === "Enter" && newm) {
             try {
+                setMessageLoading(true);
+                setNewMessage("");
                 const config = {
                     headers: {
                         "Content-Type": "application/json",
                         Authorization: `Bearer ${user.token}`,
                     },
                 };
-
+                
                 const { data } = await axios.post(
                     `${SERVER_URL}/api/message`,
                     {
-                        content: newMessage,
+                        content: newm,
                         chatId: selectedChat._id,
                     },
                     config
                 );
-
-                setNewMessage("");
+                
                 setMessages([...messages, data]);
+                setMessageLoading(false)
                 socket.emit("new-message", data);
             } catch (error) {
                 console.error("Unable to send message:", error);
+                setMessageLoading(false)
             }
         }
     };
+    const sendMessageClick = async () => {
+        
+        setMessageLoading(true);
+        try {
+            let newm = newMessage
+            setNewMessage("")
+            const config = {
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${user.token}`,
+                },
+            };
+
+            const { data } = await axios.post(
+                `${SERVER_URL}/api/message`,
+                {
+                    content: newm,
+                    chatId: selectedChat._id,
+                },
+                config
+            );
+       
+            setNewMessage("");
+            setMessages([...messages, data]);
+            setMessageLoading(false)
+            socket.emit("new-message", data);
+        } catch (error) {
+
+            console.error("Unable to send message:", error);
+            setMessageLoading(false)
+        }
+    }
 
     return (
         <>
@@ -173,8 +211,8 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
                                         {messages.map(msg => (
                                             <div
                                                 key={msg._id}
-                                                className={`mb-2 p-2 rounded ${msg.sender._id === user._id ? 'bg-success text-white align-self-end' : 'bg-light text-black align-self-start'}`}
-                                                style={{ maxWidth: '75%' }}
+                                                className={`mb-1 p-1 rounded ${msg.sender._id === user._id ? 'bg-success text-white align-self-end' : 'bg-light text-black align-self-start'}`}
+                                                style={{ maxWidth: '100%' }}
                                             >
                                                 <div className="small fw-bold">{msg.sender.name}</div>
                                                 <div>{msg.content}</div>
@@ -183,7 +221,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
                                     </div>
                                 )}
                             </div>
-                            <div className="mb-3 mt-2">
+                            <div className="mb-3 mt-2 d-flex justify-content-between">
                                 <input
                                     type="text"
                                     className="form-control"
@@ -198,6 +236,8 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
                                     onChange={(e) => setNewMessage(e.target.value)}
                                     value={newMessage}
                                 />
+                                <button className="btn btn-success btn-sm py-0" onClick={sendMessageClick}
+                                    disabled={messageLoading}>send</button>
                             </div>
                         </div>
                     </div>
