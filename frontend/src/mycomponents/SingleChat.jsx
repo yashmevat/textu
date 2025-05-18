@@ -236,8 +236,8 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
                                     onChange={(e) => setNewMessage(e.target.value)}
                                     value={newMessage}
                                 />
-                                <button className="btn btn-success btn-sm py-0" onClick={sendMessageClick}
-                                    disabled={messageLoading}>send</button>
+                                {messageLoading?(<Spinner/>):(<button className="btn btn-success btn-sm py-0" onClick={sendMessageClick}
+                                    disabled={messageLoading}>send</button>)}
                             </div>
                         </div>
                     </div>

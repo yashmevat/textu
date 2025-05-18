@@ -14,7 +14,7 @@ connectDB();
 app.use(cors({
   origin: "https://mytextu.netlify.app",
   
-    // origin: "https://localhost:5173",
+    // origin: "http://localhost:5173",
   credentials: true
 }));
 
@@ -40,7 +40,7 @@ const io = require("socket.io")(server, {
   cors: {
     origin: "https://mytextu.netlify.app",
     
-    // origin: "https://localhost:5173",
+    // origin: "http://localhost:5173",
     credentials: true
   }
 });
