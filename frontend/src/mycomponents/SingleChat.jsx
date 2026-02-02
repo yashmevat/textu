@@ -153,7 +153,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
     return (
         <>
             {selectedChat ? (
-                <div className="container-fluid px-3 py-2">
+                <div className="container-fluid ">
                     {/* Header: Back button, chat title, and actions */}
                     <div className="d-flex justify-content-between align-items-center border-bottom pb-2 mb-3">
                         {/* Back button for small screens */}
@@ -270,3 +270,4 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
 };
 
 export default SingleChat;
+
