@@ -16,15 +16,15 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
     const [newMessage, setNewMessage] = useState('');
     const [socketConnected, setSocketConnected] = useState(false);
     const selectedChatCompare = useRef();
-    const [messageLoading, setMessageLoading] = useState(false)
+    const [messageLoading, setMessageLoading] = useState(false);
 
     useEffect(() => {
         if (!user) return;
 
         socket = io(SERVER_URL, {
             withCredentials: true,
-            transports: ["websocket"], // force WebSocket transport
-        });;
+            transports: ["websocket"],
+        });
         socket.emit("setup", user);
 
         socket.on("connected", () => {
@@ -41,7 +41,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
         fetchMessages();
         selectedChatCompare.current = selectedChat;
     }, [selectedChat]);
-    // console.log(notifications, ".......")
+
     useEffect(() => {
         if (!socket) return;
 
@@ -51,10 +51,9 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
                 selectedChatCompare.current._id !== newMessageRecieved.chat._id
             ) {
                 if (!notifications.includes(newMessageRecieved)) {
-                    setNotifications([newMessageRecieved, ...notifications])
-                    setFetchAgain(!fetchAgain)
+                    setNotifications([newMessageRecieved, ...notifications]);
+                    setFetchAgain(!fetchAgain);
                 }
-
             } else {
                 setMessages(prev => [...prev, newMessageRecieved]);
             }
@@ -82,12 +81,13 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
             socket.emit("join-chat", selectedChat._id);
         } catch (error) {
             console.error("Failed to load messages:", error);
+            setLoading(false);
         }
     };
 
     const sendMessage = async (e) => {
-        console.log("clicked", e.key, newMessage)
-        let newm = newMessage
+        console.log("clicked", e.key, newMessage);
+        let newm = newMessage;
         if (e.key === "Enter" && newm) {
             try {
                 setMessageLoading(true);
@@ -98,7 +98,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
                         Authorization: `Bearer ${user.token}`,
                     },
                 };
-                
+
                 const { data } = await axios.post(
                     `${SERVER_URL}/api/message`,
                     {
@@ -107,22 +107,22 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
                     },
                     config
                 );
-                
+
                 setMessages([...messages, data]);
-                setMessageLoading(false)
+                setMessageLoading(false);
                 socket.emit("new-message", data);
             } catch (error) {
                 console.error("Unable to send message:", error);
-                setMessageLoading(false)
+                setMessageLoading(false);
             }
         }
     };
+
     const sendMessageClick = async () => {
-        
         setMessageLoading(true);
         try {
-            let newm = newMessage
-            setNewMessage("")
+            let newm = newMessage;
+            setNewMessage("");
             const config = {
                 headers: {
                     "Content-Type": "application/json",
@@ -138,22 +138,20 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
                 },
                 config
             );
-       
-            setNewMessage("");
+
             setMessages([...messages, data]);
-            setMessageLoading(false)
+            setMessageLoading(false);
             socket.emit("new-message", data);
         } catch (error) {
-
             console.error("Unable to send message:", error);
-            setMessageLoading(false)
+            setMessageLoading(false);
         }
-    }
+    };
 
     return (
         <>
             {selectedChat ? (
-                <div className="container-fluid ">
+                <div className="container-fluid">
                     {/* Header: Back button, chat title, and actions */}
                     <div className="d-flex justify-content-between align-items-center border-bottom pb-2 mb-3">
                         {/* Back button for small screens */}
@@ -212,7 +210,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
                                             <div
                                                 key={msg._id}
                                                 className={`mb-1 p-1 rounded ${msg.sender._id === user._id ? 'bg-success text-white align-self-end' : 'bg-light text-black align-self-start'}`}
-                                                style={{ maxWidth: '100%' }}
+                                                style={{ maxWidth: '75%' }}
                                             >
                                                 <div className="small fw-bold">{msg.sender.name}</div>
                                                 <div>{msg.content}</div>
@@ -221,7 +219,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
                                     </div>
                                 )}
                             </div>
-                            <div className="mb-3 mt-2 d-flex justify-content-between">
+                            <div className="mb-3 mt-2 d-flex gap-2">
                                 <input
                                     type="text"
                                     className="form-control"
@@ -236,19 +234,27 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
                                     onChange={(e) => setNewMessage(e.target.value)}
                                     value={newMessage}
                                 />
-                                {messageLoading?(<Spinner/>):(<button className="btn btn-success btn-sm py-0" onClick={sendMessageClick}
-                                    disabled={messageLoading}>send</button>)}
+                                {messageLoading ? (
+                                    <Spinner />
+                                ) : (
+                                    <button 
+                                        className="btn btn-success btn-sm" 
+                                        onClick={sendMessageClick}
+                                        disabled={messageLoading || !newMessage.trim()}
+                                    >
+                                        Send
+                                    </button>
+                                )}
                             </div>
                         </div>
                     </div>
                 </div>
             ) : (
-
                 <div
-                    className="d-flex flex-column justify-content-center align-items-center text-center w-100 h-100"
+                    className="d-flex flex-column justify-content-center align-items-center text-center w-100"
                     style={{
-                        minHeight: "100vh", // adjust based on your layout
-                        padding: "1rem",// optional background
+                        minHeight: "400px",
+                        padding: "1rem",
                         borderRadius: "10px"
                     }}
                 >
@@ -262,12 +268,9 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
                         Click on a user to open the conversation.
                     </p>
                 </div>
-
-
             )}
         </>
     );
 };
 
 export default SingleChat;
-
