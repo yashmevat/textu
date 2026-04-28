@@ -1,4 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useMediaQuery } from 'react-responsive';
+import { FaPaperclip, FaCamera } from 'react-icons/fa';
 import { ChatState } from '../context/ChatProvider';
 import { getSender, getFull } from '../config/ChatLogics';
 import MyProfileModal from './MyProfileModal';
@@ -17,6 +19,107 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
     const [socketConnected, setSocketConnected] = useState(false);
     const selectedChatCompare = useRef();
     const [messageLoading, setMessageLoading] = useState(false);
+    const [uploading, setUploading] = useState(false);
+    const [showCamera, setShowCamera] = useState(false);
+    const videoRef = useRef(null);
+    const canvasRef = useRef(null);
+    const isMobile = useMediaQuery({ maxWidth: 767 });
+    // Camera modal logic (desktop only)
+    useEffect(() => {
+        let stream;
+        if (showCamera && !isMobile && videoRef.current) {
+            navigator.mediaDevices.getUserMedia({ video: true })
+                .then(s => {
+                    stream = s;
+                    videoRef.current.srcObject = stream;
+                });
+        }
+        return () => {
+            if (videoRef.current && videoRef.current.srcObject) {
+                videoRef.current.srcObject.getTracks().forEach(track => track.stop());
+            }
+        };
+    }, [showCamera, isMobile]);
+
+    const handleOpenCamera = () => {
+        if (isMobile) {
+            document.getElementById('camera-upload').click();
+        } else {
+            setShowCamera(true);
+        }
+    };
+
+    const handleCapture = () => {
+        const video = videoRef.current;
+        const canvas = canvasRef.current;
+        if (video && canvas) {
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+            canvas.toBlob(blob => {
+                if (blob) handleFileUpload(new File([blob], 'captured.jpg', { type: 'image/jpeg' }), 'image');
+            }, 'image/jpeg');
+            setShowCamera(false);
+        }
+    };
+
+    // Cloudinary config (same as Signup)
+    const CLOUDINARY_URL = `https://api.cloudinary.com/v1_1/dpbkgo4b7/auto/upload`;
+    const UPLOAD_PRESET = 'chat-app';
+
+    // Handle document/image upload
+    const handleFileUpload = async (file, type = 'auto') => {
+        setUploading(true);
+        const data = new FormData();
+        data.append('file', file);
+        data.append('upload_preset', UPLOAD_PRESET);
+        data.append('cloud_name', 'dpbkgo4b7');
+        try {
+            const res = await fetch(CLOUDINARY_URL, {
+                method: 'post',
+                body: data
+            });
+            const json = await res.json();
+            setUploading(false);
+            if (json.url) {
+                await sendFileMessage(json.url, file.name, type);
+            }
+        } catch (err) {
+            setUploading(false);
+            alert('Upload failed!');
+        }
+    };
+
+    // Send file message
+    const sendFileMessage = async (fileUrl, fileName, fileType) => {
+        setMessageLoading(true);
+        const config = {
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${user.token}`,
+            },
+        };
+        try {
+            const { data } = await axios.post(
+                `${SERVER_URL}/api/message`,
+                {
+                    content: '',
+                    chatId: selectedChat._id,
+                    file: fileUrl,
+                    fileName,
+                    fileType,
+                },
+                config
+            );
+            setMessages([...messages, data]);
+            setMessageLoading(false);
+            socket.emit('new-message', data);
+        } catch (error) {
+            setMessageLoading(false);
+            alert('Unable to send file');
+        }
+    };
 
     useEffect(() => {
         if (!user) return;
@@ -213,13 +316,79 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
                                                 style={{ maxWidth: '75%' }}
                                             >
                                                 <div className="small fw-bold">{msg.sender.name}</div>
-                                                <div>{msg.content}</div>
+                                                {/* File/Image Preview WhatsApp style */}
+                                                {msg.file ? (
+                                                    msg.fileType === 'image' ? (
+                                                        <div style={{ margin: '8px 0' }}>
+                                                            <img src={msg.file} alt={msg.fileName || 'image'} style={{ maxWidth: '180px', maxHeight: '220px', borderRadius: '10px', boxShadow: '0 2px 8px #0001' }} />
+                                                            {msg.fileName && <div className="small text-muted mt-1">{msg.fileName}</div>}
+                                                        </div>
+                                                    ) : (
+                                                        <div style={{ display: 'flex', alignItems: 'center', background: '#f1f1f1', borderRadius: '8px', padding: '10px', margin: '8px 0', boxShadow: '0 2px 8px #0001' }}>
+                                                            <div style={{ fontSize: 32, color: '#6c63ff', marginRight: 12 }}>
+                                                                <FaPaperclip />
+                                                            </div>
+                                                            <div style={{ flex: 1 }}>
+                                                                <div style={{ fontWeight: 500, fontSize: 15, color: '#333' }}>{msg.fileName || 'Document'}</div>
+                                                                <a href={msg.file} download={msg.fileName} target="_blank" rel="noopener noreferrer" style={{ color: '#6c63ff', fontSize: 13, textDecoration: 'underline' }}>Download</a>
+                                                            </div>
+                                                        </div>
+                                                    )
+                                                ) : null}
+                                                {/* Show text content if present */}
+                                                {msg.content && <div>{msg.content}</div>}
                                             </div>
                                         ))}
                                     </div>
                                 )}
                             </div>
-                            <div className="mb-3 mt-2 d-flex gap-2">
+                            <div className="mb-3 mt-2 d-flex gap-2 align-items-center">
+                                {/* Document upload */}
+                                <label htmlFor="doc-upload" className="btn btn-outline-secondary btn-sm mb-0" title="Send Document">
+                                    <FaPaperclip size={18} />
+                                </label>
+                                <input
+                                    id="doc-upload"
+                                    type="file"
+                                    accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.zip,.rar,.csv,.mp3,.mp4,.avi,.mkv,.json,.xml,.html,.js,.ts,.jsx,.tsx,.py,.java,.c,.cpp,.jpg,.jpeg,.png,.gif,.bmp,.svg,.webp"
+                                    style={{ display: 'none' }}
+                                    onChange={e => {
+                                        if (e.target.files[0]) handleFileUpload(e.target.files[0], 'document');
+                                        e.target.value = '';
+                                    }}
+                                />
+                                {/* Camera upload */}
+                                <button type="button" className="btn btn-outline-secondary btn-sm mb-0" title="Send Image" onClick={handleOpenCamera}>
+                                    <FaCamera size={18} />
+                                </button>
+                                {/* Hidden file input for mobile */}
+                                <input
+                                    id="camera-upload"
+                                    type="file"
+                                    accept="image/*"
+                                    capture="environment"
+                                    style={{ display: 'none' }}
+                                    onChange={e => {
+                                        if (e.target.files[0]) handleFileUpload(e.target.files[0], 'image');
+                                        e.target.value = '';
+                                    }}
+                                />
+                                            {/* Camera Modal for desktop */}
+                                            {showCamera && !isMobile && (
+                                                <div style={{
+                                                    position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', background: '#0008', zIndex: 9999,
+                                                    display: 'flex', alignItems: 'center', justifyContent: 'center'
+                                                }}>
+                                                    <div style={{ background: '#fff', borderRadius: 12, padding: 24, boxShadow: '0 2px 16px #0004', position: 'relative' }}>
+                                                        <video ref={videoRef} autoPlay style={{ width: 320, height: 240, borderRadius: 8, background: '#222' }} />
+                                                        <canvas ref={canvasRef} style={{ display: 'none' }} />
+                                                        <div className="d-flex justify-content-between mt-3">
+                                                            <button className="btn btn-success me-2" onClick={handleCapture}>Capture</button>
+                                                            <button className="btn btn-danger" onClick={() => setShowCamera(false)}>Close</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            )}
                                 <input
                                     type="text"
                                     className="form-control"
@@ -231,14 +400,15 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
                                         fontSize: '14px'
                                     }}
                                     onKeyDown={sendMessage}
-                                    onChange={(e) => setNewMessage(e.target.value)}
+                                    onChange={e => setNewMessage(e.target.value)}
                                     value={newMessage}
+                                    disabled={uploading}
                                 />
-                                {messageLoading ? (
+                                {(messageLoading || uploading) ? (
                                     <Spinner />
                                 ) : (
-                                    <button 
-                                        className="btn btn-success btn-sm" 
+                                    <button
+                                        className="btn btn-success btn-sm"
                                         onClick={sendMessageClick}
                                         disabled={messageLoading || !newMessage.trim()}
                                     >
