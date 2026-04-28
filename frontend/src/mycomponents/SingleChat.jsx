@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import '../Style/ChatMessage.css';
 import { useMediaQuery } from 'react-responsive';
 import { FaPaperclip, FaCamera } from 'react-icons/fa';
 import { ChatState } from '../context/ChatProvider';
@@ -312,7 +313,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
                                         {messages.map(msg => (
                                             <div
                                                 key={msg._id}
-                                                className={`mb-1 p-1 rounded ${msg.sender._id === user._id ? 'bg-success text-white align-self-end' : 'bg-light text-black align-self-start'}`}
+                                                className={`chat-message-container mb-1 p-1 rounded ${msg.sender._id === user._id ? 'bg-success text-white align-self-end' : 'bg-light text-black align-self-start'}`}
                                                 style={{ maxWidth: '75%' }}
                                             >
                                                 <div className="small fw-bold">{msg.sender.name}</div>

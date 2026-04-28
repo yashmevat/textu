@@ -1,0 +1,23 @@
+.chat-message-container {
+  max-width: 90vw;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 767px) {
+  .chat-message-container {
+    max-width: 98vw;
+    font-size: 15px;
+  }
+  .chat-message-container .small.fw-bold {
+    font-size: 13px;
+    word-break: break-word;
+  }
+}
+
+.chat-message-container .small.fw-bold {
+  white-space: pre-line;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  font-size: 14px;
+}
