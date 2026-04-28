@@ -4,17 +4,19 @@ const Chat = require("../models/chatModel");
 const Message = require("../models/messageModel");
 
 const sendMessage = asyncHandler(async(req,res)=>{
-     const {content,chatId} = req.body
-     if(!content || !chatId){
-        console.log("invalid ");
-        return res.sendStatus(400)
-        
-     }
-     var newMessage = {
-        sender : req.user._id,
-        content:content,
-        chat:chatId
-     }
+      const {content, chatId, file, fileName, fileType} = req.body;
+      if ((!content && !file) || !chatId) {
+          console.log("invalid ");
+          return res.sendStatus(400);
+      }
+      var newMessage = {
+          sender: req.user._id,
+          content: content || '',
+          chat: chatId,
+          file: file || null,
+          fileName: fileName || null,
+          fileType: fileType || null
+      }
 
      try {
         var message = await Message.create(newMessage);

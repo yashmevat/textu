@@ -8,6 +8,18 @@ const messageModel = new mongoose.Schema({
     type:String,
     trim:true
    },
+   file: {
+     type: String,
+     default: null
+   },
+   fileName: {
+     type: String,
+     default: null
+   },
+   fileType: {
+     type: String,
+     default: null
+   },
    chat:{
      type:mongoose.Schema.Types.ObjectId,
      ref:"Chat"
